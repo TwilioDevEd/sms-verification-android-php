@@ -1,0 +1,14 @@
+language: php
+php:
+  - '5.6'
+  - '7.0'
+before_install: "composer install --dev"
+script: "cp .env.example .env && composer test"
+env:
+  global:
+    - TWILIO_ACCOUNT_SID=ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    - TWILIO_API_KEY=ISXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    - TWILIO_API_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    - SENDING_PHONE_NUMBER=+15005550006
+    - APP_HASH=HASH
+    - CLIENT_SECRET=SECRET
