@@ -8,7 +8,6 @@
   convertNoticesToExceptions="true"
   convertWarningsToExceptions="true"
   processIsolation="true"
-  stopOnFailure="true"
   syntaxCheck="true">
   <testsuites>
     <testsuite name="Sms Verification">

@@ -1,6 +1,7 @@
 <?php
 
-$dotenv = new \Dotenv\Dotenv(__DIR__ . '/../');
+$file = file_exists(__DIR__ . '/../.env') ? '.env' : '.env.example';
+$dotenv = new \Dotenv\Dotenv(__DIR__ . '/../', $file);
 $dotenv->load();
 
 $config = [
@@ -16,31 +17,32 @@ $config = [
 if (!$config['twilioAccountSID'] ||
     !$config['twilioApiKey'] ||
     !$config['twilioApiSecret']) {
-    echo 'Please copy the .env.example file to .env, ' .
-         'and then add your Twilio API Key, API Secret, ' .
-         'and Account SID to the .env file. ' .
-         'Find them on https://www.twilio.com/console';
-    die();
+    throw new DomainException(
+        'Please copy the .env.example file to .env, and then add your ' .
+        'Twilio API Key, API Secret, and Account SID to the .env file. ' .
+        'Find them on https://www.twilio.com/console'
+    );
 }
 
 if (!$config['sendingPhoneNumber']) {
-    echo 'Please provide a valid phone number, ' +
-         'such as +15125551212, in the .env file';
-    die();
+    throw new DomainException(
+        'Please provide a valid phone number, ' .
+        'such as +15125551212, in the .env file'
+    );
 }
 
 if (!$config['appHash']) {
-    echo 'Please provide a valid Android app hash, ' .
-          'which you can find in the Settings menu item ' .
-          'of the Android app, in the .env file';
-    die();
+    throw new DomainException(
+        'Please provide a valid Android app hash, which you can find in ' .
+        'the Settings menu item of the Android app, in the .env file'
+    );
 }
 
 if (!$config['clientSecret']) {
-    echo 'Please provide a secret string to share, ' .
-         'between the app and the server ' .
-         'in the .env file';
-    die();
+    throw new DomainException(
+        'Please provide a secret string to share, between the app and the ' .
+        'server in the .env file'
+    );
 }
 
 return $config;

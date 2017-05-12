@@ -2,71 +2,86 @@
 
 namespace App\Controllers;
 
+use \Twilio\Rest\Client;
+use \Stash\Pool;
+use \Stash\Driver\FileSystem;
+
 class SmsVerification
 {
     public const EXPIRATION_IN_SECONDS = 9;
 
-    public function __construct($twilioClient, $sendingPhoneNumber, $appHash)
+    private function __construct($config, $twilioClient, $pool)
     {
+        $this->config = $config;
         $this->twilioClient = $twilioClient;
-        $this->sendingPhoneNumber = $sendingPhoneNumber;
-        $this->appHash = $appHash;
+        $this->pool = $pool;
+        return $this;
     }
 
-    public static function generateOneTimeCode()
+    public static function of($config, $twilioClient = null, $pool = null)
     {
-        $codelength = 6;
-        $cos = pow(10, ($codelength - 1));
-        return floor(rand() * ($cos * 9)) + $cos;
+        $twilioClient = $twilioClient ?: new Client(
+          $config['twilioApiKey'],
+          $config['twilioApiSecret'],
+          $config['twilioAccountSID']
+        );
+        $pool = $pool ?: new Pool(new FileSystem([]));
+
+        return new self($config, $twilioClient, $pool);
     }
 
     public function request($phone)
     {
-        echo "Requesting SMS to be sent to {$phone}";
+        echo "\nRequesting SMS to be sent to {$phone}\n";
 
-        $otp = self::generateOneTimeCode();
-        apc_add($phone, $otp, self::EXPIRATION_IN_SECONDS * 100);
+        $otp = rand(100000, 999999);
 
-        $smsBody = "[#] Use {$otp} as your code for the app!\n{$this->appHash}";
+        $item = $this->pool
+                     ->getItem($phone)
+                     ->set($otp)
+                     ->expiresAfter(self::EXPIRATION_IN_SECONDS * 100);
+        $this->pool->save($item);
+
+        $smsBody = "\n[#] Use {$otp} as your code for the app!\n" .
+                   "{$this->config['appHash']}\n";
         echo $smsBody;
 
-        return $this->twilioClient->messages->create($phone, [
-            'from' => $this->sendingPhoneNumber,
+        $this->twilioClient->messages->create($phone, [
+            'from' => $this->config['sendingPhoneNumber'],
             'body' => $smsBody
         ]);
+
+        return $otp;
     }
 
     public function verify($phone, $smsBody)
     {
-        echo "Verifying {$phone}: {$smsBody}";
+        echo "\nVerifying {$phone}: {$smsBody}\n";
 
-        $otp = apc_fetch($phone);
-
-        if ($otp === null) {
-            echo "No cached otp value found for phone: {$phone}";
+        if (!$this->pool->hasItem($phone)) {
+            echo "\nNo cached otp value found for phone: {$phone}\n";
             return false;
         }
 
+        $otp = $this->pool->getItem($phone)->get();
         if (strpos($smsBody, $otp) === false) {
-            echo 'Mismatch between otp value found and otp value expected';
+            echo "\nMismatch between otp value found and otp value expected\n";
             return false;
         }
 
-        echo 'Found otp value in cache';
+        echo "\nFound otp value in cache\n";
         return true;
     }
 
     public function reset($phone)
     {
-        echo "Resetting code for: {$phone}";
+        echo "\nResetting code for: {$phone}\n";
 
-        $otp = apc_fetch($phone);
-
-        if (!$otp) {
-            echo "No cached otp value found for phone: {$phone}";
+        if (!$this->pool->hasItem($phone)) {
+            echo "\nNo cached otp value found for phone: {$phone}\n";
             return false;
         }
 
-        return apc_delete($phone);
+        return $this->pool->deleteItems([$phone]);
     }
 }
