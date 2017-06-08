@@ -40,6 +40,7 @@ class SmsVerification
                      ->getItem($phone)
                      ->set($otp)
                      ->expiresAfter(self::EXPIRATION_IN_SECONDS * 100);
+
         $this->pool->save($item);
 
         $smsBody = "\n[#] Use {$otp} as your code for the app!\n" .
@@ -64,7 +65,7 @@ class SmsVerification
         }
 
         $otp = $this->pool->getItem($phone)->get();
-        if (strpos($smsBody, $otp) === false) {
+        if (strpos("$smsBody", "$otp") === false) {
             echo "\nMismatch between otp value found and otp value expected\n";
             return false;
         }

@@ -5,7 +5,8 @@ use \App\Controllers\SmsVerification;
 $config = include_once(__DIR__ . '/config.php');
 $k = new \Klein\Klein();
 
-$k->respond('GET', '/', function($req, $res, $service) use ($config) {
+$k->respond('GET', '/', function($req, $res, $service) {
+    global $config;
     $view = __DIR__ . '/views/index.php';
     return $service->render($view, array_merge($config, [
         'configured' => 'Configured properly',
@@ -13,7 +14,8 @@ $k->respond('GET', '/', function($req, $res, $service) use ($config) {
     ]));
 });
 
-$k->respond('POST', '/api/request', function($req, $res) use($config) {
+$k->respond('POST', '/api/request', function($req, $res) {
+    global $config;
     $clientSecret = $req->param('client_secret');
     $phone = $req->param('phone');
 
@@ -34,10 +36,11 @@ $k->respond('POST', '/api/request', function($req, $res) use($config) {
     ]);
 });
 
-$k->respond('POST', '/api/verify', function($req, $res) use ($config) {
+$k->respond('POST', '/api/verify', function($req, $res) {
+    global $config;
     $clientSecret = $req->param('client_secret');
-    $smsMessage = $req->param('phone');
-    $phone = $req->param('sms_message');
+    $smsMessage = $req->param('sms_message');
+    $phone = $req->param('phone');
 
     if (!requiredParams([$clientSecret, $phone, $smsMessage])) {
         $res->status(400);
@@ -51,18 +54,19 @@ $k->respond('POST', '/api/verify', function($req, $res) use ($config) {
     }
 
     if (!SmsVerification::of($config)->verify($phone, $smsMessage)) {
-        return [
+        return $res->json([
             'success' => false,
             'msg' => 'Unable to validate code for this phone number'
-        ];
+        ]);
     }
-    return [
+    return $res->json([
         'success' => true,
-        'phone' => phone
-    ];
+        'phone' => $phone
+    ]);
 });
 
-$k->respond('POST', '/api/reset', function($req, $res) use ($config) {
+$k->respond('POST', '/api/reset', function($req, $res) {
+    global $config;
     $clientSecret = $req->param('client_secret');
     $phone = $req->param('phone');
 
@@ -77,22 +81,23 @@ $k->respond('POST', '/api/reset', function($req, $res) use ($config) {
     }
 
     if (!SmsVerification::of($config)->reset($phone)) {
-        return [
+        return $res->json([
             'success' => false,
             'msg' => 'Unable to reset code for this phone number'
-        ];
+        ]);
     }
 
-    return [
+    return $res->json([
         'success' => true,
         'phone' => $phone
-    ];
+    ]);
 });
 
 $k->dispatch();
 
 function matchSecretKey($clientSecret)
 {
+    global $config;
     return $config['clientSecret'] == $clientSecret;
 }
 
