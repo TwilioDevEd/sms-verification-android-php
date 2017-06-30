@@ -38,7 +38,7 @@ $k->respond('POST', '/api/request', function($req, $res) {
 
 $k->respond('POST', '/api/verify', function($req, $res) {
     global $config;
-    $body = json_decode($res->body(), true);
+    $body = json_decode($req->body(), true);
     extract($body);
 
     if (!requiredParams([$client_secret, $phone, $sms_message])) {
