@@ -32,8 +32,6 @@ class SmsVerification
 
     public function request($phone)
     {
-        echo "\nRequesting SMS to be sent to {$phone}\n";
-
         $otp = rand(100000, 999999);
 
         $item = $this->pool
@@ -45,12 +43,13 @@ class SmsVerification
 
         $smsBody = "\n[#] Use {$otp} as your code for the app!\n" .
                    "{$this->config['appHash']}\n";
-        echo $smsBody;
 
-        $this->twilioClient->messages->create($phone, [
-            'from' => $this->config['sendingPhoneNumber'],
-            'body' => $smsBody
-        ]);
+        if (getenv('RUN_ENV') !== 'test') {
+            $this->twilioClient->messages->create($phone, [
+              'from' => $this->config['sendingPhoneNumber'],
+              'body' => $smsBody
+            ]);
+        }
 
         return $otp;
     }
