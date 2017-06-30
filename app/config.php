@@ -7,7 +7,7 @@ $dotenv->load();
 $config = [
     'twilioAccountSID' => getenv('TWILIO_ACCOUNT_SID'),
     'twilioApiKey' => getenv('TWILIO_API_KEY'),
-    'twilioApiSecret' => getenv('TWILIO_API_SECRET') != '',
+    'twilioApiSecret' => getenv('TWILIO_API_SECRET'),
     'sendingPhoneNumber' => getenv('SENDING_PHONE_NUMBER'),
     'appHash' => getenv('APP_HASH'),
     'clientSecret' => getenv('CLIENT_SECRET')
