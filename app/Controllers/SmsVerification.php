@@ -56,29 +56,20 @@ class SmsVerification
 
     public function verify($phone, $smsBody)
     {
-        echo "\nVerifying {$phone}: {$smsBody}\n";
-
         if (!$this->pool->hasItem($phone)) {
-            echo "\nNo cached otp value found for phone: {$phone}\n";
             return false;
         }
 
         $otp = $this->pool->getItem($phone)->get();
         if (strpos("$smsBody", "$otp") === false) {
-            echo "\nMismatch between otp value found and otp value expected\n";
             return false;
         }
-
-        echo "\nFound otp value in cache\n";
         return true;
     }
 
     public function reset($phone)
     {
-        echo "\nResetting code for: {$phone}\n";
-
         if (!$this->pool->hasItem($phone)) {
-            echo "\nNo cached otp value found for phone: {$phone}\n";
             return false;
         }
 
