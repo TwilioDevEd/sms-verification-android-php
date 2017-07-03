@@ -60,6 +60,7 @@ class SmsVerificationRoutesTest extends TestCase
           'client_secret' => getenv('CLIENT_SECRET'),
           'phone' => getenv('SENDING_PHONE_NUMBER')
         ];
+
         $response = $this->getClient()->post('/api/request', ['json' => $requestData]);
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -92,12 +93,12 @@ class SmsVerificationRoutesTest extends TestCase
     {
         $requestData = [
             'client_secret' => getenv('CLIENT_SECRET'),
-            'sms_message' => 'verification code',
+            'sms_message' => 'invalid_code',
             'phone' => getenv('SENDING_PHONE_NUMBER')
         ];
 
         $response = $this->getClient()->post('/api/verify', ['json' => $requestData]);
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
     function testResetVerificationCode()

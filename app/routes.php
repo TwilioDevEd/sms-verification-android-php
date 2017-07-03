@@ -57,6 +57,7 @@ $k->respond('POST', '/api/verify', function($req, $res) {
     }
 
     if (!SmsVerification::of($config)->verify($phone, $sms_message)) {
+        $res->code(401);
         return $res->json([
             'success' => false,
             'msg' => 'Unable to validate code for this phone number'
