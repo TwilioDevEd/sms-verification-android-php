@@ -57,3 +57,5 @@ RUN phpunit
 ENV PORT 8000
 
 EXPOSE $PORT
+
+CMD php -S 0.0.0.0:$PORT
