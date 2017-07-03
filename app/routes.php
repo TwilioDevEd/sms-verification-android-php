@@ -20,7 +20,7 @@ $k->respond('POST', '/api/request', function($req, $res) {
     $client_secret = $body['client_secret'];
     $phone = $body['phone'];
 
-    if (!requiredParams([$client_secret, $phone])) {
+    if (empty($client_secret) && empty($phone)) {
         $res->code(400);
         return $res->body(['message' => 'Both client_secret and phone are required.']);
     }
@@ -43,8 +43,9 @@ $k->respond('POST', '/api/verify', function($req, $res) {
     $body = json_decode($req->body(), true);
     $client_secret = $body['client_secret'];
     $sms_message = $body['sms_message'];
+    $phone =$body['phone'];
 
-    if (!requiredParams([$client_secret, $phone, $sms_message])) {
+    if (empty($client_secret) && empty($phone) && empty($sms_message)) {
         $res->code(400);
         return $res->json(['message' => 'The client_secret, phone, and ' .
                'sms_message parameters are required']);
@@ -74,7 +75,7 @@ $k->respond('POST', '/api/reset', function($req, $res) {
     $client_secret = $body['client_secret'];
     $phone = $body['phone'];
 
-    if (!requiredParams([$client_secret, $phone])) {
+    if (empty($client_secret) && empty($phone)) {
         $res->code(400);
         return $res->json(['message' => 'The client_secret and phone parameters are required']);
     }
@@ -103,9 +104,4 @@ function matchSecretKey($clientSecret)
 {
     global $config;
     return $config['clientSecret'] == $clientSecret;
-}
-
-function requiredParams($params)
-{
-    return !in_array('', array_map('trim', $params));
 }
