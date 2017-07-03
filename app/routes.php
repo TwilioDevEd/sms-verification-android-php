@@ -16,7 +16,9 @@ $k->respond('GET', '/', function($req, $res, $service) {
 
 $k->respond('POST', '/api/request', function($req, $res) {
     global $config;
-    extract(json_decode($req->body(), true));
+    $body = json_decode($req->body(), true);
+    $client_secret = $body['client_secret'];
+    $phone = $body['phone'];
 
     if (!requiredParams([$client_secret, $phone])) {
         $res->code(400);
@@ -39,7 +41,8 @@ $k->respond('POST', '/api/request', function($req, $res) {
 $k->respond('POST', '/api/verify', function($req, $res) {
     global $config;
     $body = json_decode($req->body(), true);
-    extract($body);
+    $client_secret = $body['client_secret'];
+    $sms_message = $body['sms_message'];
 
     if (!requiredParams([$client_secret, $phone, $sms_message])) {
         $res->code(400);
@@ -68,7 +71,8 @@ $k->respond('POST', '/api/verify', function($req, $res) {
 $k->respond('POST', '/api/reset', function($req, $res) {
     global $config;
     $body = json_decode($req->body(), true);
-    extract($body);
+    $client_secret = $body['client_secret'];
+    $phone = $body['phone'];
 
     if (!requiredParams([$client_secret, $phone])) {
         $res->code(400);

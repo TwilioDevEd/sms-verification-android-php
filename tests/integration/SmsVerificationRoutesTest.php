@@ -64,7 +64,7 @@ class SmsVerificationRoutesTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
 
         $body = json_decode($response->getBody()->getContents(), true);
-        extract($body);
+        $success = $body['success'];
         $this->assertEquals($success, true);
     }
 
