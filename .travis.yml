@@ -1,5 +1,7 @@
-language: php
-php:
-  - '7.1'
-before_install: "composer install"
-script: "phpunit"
+sudo: required
+
+services:
+  - docker
+
+script:
+  - docker build . -t twiliodeved/sms-verification-android-php
