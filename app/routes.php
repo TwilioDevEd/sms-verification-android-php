@@ -16,21 +16,23 @@ $k->respond('GET', '/', function($req, $res, $service) {
 
 $k->respond('POST', '/api/request', function($req, $res) {
     global $config;
-    $clientSecret = $req->param('client_secret');
-    $phone = $req->param('phone');
+    $body = json_decode($req->body(), true);
+    $client_secret = $body['client_secret'];
+    $phone = $body['phone'];
 
-    if (!requiredParams([$clientSecret, $phone])) {
-        $res->status(400);
-        return 'Both client_secret and phone are required.';
+    if (empty($client_secret) && empty($phone)) {
+        $res->code(400);
+        return $res->body(['message' => 'Both client_secret and phone are required.']);
     }
 
-    if (!matchSecretKey($clientSecret)) {
-        $res->status(400);
-        return 'The client_secret parameter does not match.';
+    if (!matchSecretKey($client_secret)) {
+        $res->code(400);
+        return $res->body(['message' => 'The client_secret parameter does not match.']);
     }
 
-    SmsVerification::of($config)->request($phone);
-    $res->send([
+    $smsResult = SmsVerification::of($config)->request($phone);
+
+    return $res->json([
         'success' => true,
         'time' => SmsVerification::EXPIRATION_IN_SECONDS
     ]);
@@ -38,27 +40,30 @@ $k->respond('POST', '/api/request', function($req, $res) {
 
 $k->respond('POST', '/api/verify', function($req, $res) {
     global $config;
-    $clientSecret = $req->param('client_secret');
-    $smsMessage = $req->param('sms_message');
-    $phone = $req->param('phone');
+    $body = json_decode($req->body(), true);
+    $client_secret = $body['client_secret'];
+    $sms_message = $body['sms_message'];
+    $phone =$body['phone'];
 
-    if (!requiredParams([$clientSecret, $phone, $smsMessage])) {
-        $res->status(400);
-        return 'The client_secret, phone, and ' .
-               'sms_message parameters are required';
+    if (empty($client_secret) && empty($phone) && empty($sms_message)) {
+        $res->code(400);
+        return $res->json(['message' => 'The client_secret, phone, and ' .
+               'sms_message parameters are required']);
     }
 
-    if (!matchSecretKey($clientSecret)) {
-        $res->status(400);
-        return 'The client_secret parameter does not match.';
+    if (!matchSecretKey($client_secret)) {
+        $res->code(400);
+        return $res->json(['message' => 'The client_secret parameter does not match.']);
     }
 
-    if (!SmsVerification::of($config)->verify($phone, $smsMessage)) {
+    if (!SmsVerification::of($config)->verify($phone, $sms_message)) {
+        $res->code(401);
         return $res->json([
             'success' => false,
             'msg' => 'Unable to validate code for this phone number'
         ]);
     }
+
     return $res->json([
         'success' => true,
         'phone' => $phone
@@ -67,17 +72,18 @@ $k->respond('POST', '/api/verify', function($req, $res) {
 
 $k->respond('POST', '/api/reset', function($req, $res) {
     global $config;
-    $clientSecret = $req->param('client_secret');
-    $phone = $req->param('phone');
+    $body = json_decode($req->body(), true);
+    $client_secret = $body['client_secret'];
+    $phone = $body['phone'];
 
-    if (!requiredParams([$clientSecret, $phone])) {
-        $res->status(400);
-        return 'The client_secret and phone parameters are required';
+    if (empty($client_secret) && empty($phone)) {
+        $res->code(400);
+        return $res->json(['message' => 'The client_secret and phone parameters are required']);
     }
 
-    if (!matchSecretKey($clientSecret)) {
-        $res->status(400);
-        return 'The client_secret parameter does not match.';
+    if (!matchSecretKey($client_secret)) {
+        $res->code(400);
+        return $res->json(['message' => 'The client_secret parameter does not match.']);
     }
 
     if (!SmsVerification::of($config)->reset($phone)) {
@@ -99,9 +105,4 @@ function matchSecretKey($clientSecret)
 {
     global $config;
     return $config['clientSecret'] == $clientSecret;
-}
-
-function requiredParams($params)
-{
-    return !in_array('', array_map('trim', $params));
 }

@@ -2,7 +2,7 @@
 <phpunit
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.6/phpunit.xsd"
-  bootstrap="./vendor/autoload.php"
+  bootstrap="./tests/bootstrap.php"
   colors="true"
   convertErrorsToExceptions="true"
   convertNoticesToExceptions="true"
@@ -14,4 +14,16 @@
       <directory suffix="Test.php">tests</directory>
     </testsuite>
   </testsuites>
+  <php>
+    <env name="RUN_ENV" value="test" />
+    <env name="TWILIO_ACCOUNT_SID" value="ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+    <env name="TWILIO_API_KEY" value="ISXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+    <env name="TWILIO_API_SECRET" value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+    <env name="SENDING_PHONE_NUMBER" value="+15005550066" />
+    <env name="APP_HASH" value="HASH" />
+    <env name="CLIENT_SECRET" value="SECRET" />
+    <const name="WEB_SERVER_HOST" value="localhost" />
+    <const name="WEB_SERVER_PORT" value="1349" />
+    <const name="WEB_SERVER_DOCROOT" value="./" />
+  </php>
 </phpunit>

@@ -32,8 +32,6 @@ class SmsVerification
 
     public function request($phone)
     {
-        echo "\nRequesting SMS to be sent to {$phone}\n";
-
         $otp = rand(100000, 999999);
 
         $item = $this->pool
@@ -45,41 +43,33 @@ class SmsVerification
 
         $smsBody = "\n[#] Use {$otp} as your code for the app!\n" .
                    "{$this->config['appHash']}\n";
-        echo $smsBody;
 
-        $this->twilioClient->messages->create($phone, [
-            'from' => $this->config['sendingPhoneNumber'],
-            'body' => $smsBody
-        ]);
+        if (getenv('RUN_ENV') !== 'test') {
+            $this->twilioClient->messages->create($phone, [
+              'from' => $this->config['sendingPhoneNumber'],
+              'body' => $smsBody
+            ]);
+        }
 
         return $otp;
     }
 
     public function verify($phone, $smsBody)
     {
-        echo "\nVerifying {$phone}: {$smsBody}\n";
-
         if (!$this->pool->hasItem($phone)) {
-            echo "\nNo cached otp value found for phone: {$phone}\n";
             return false;
         }
 
         $otp = $this->pool->getItem($phone)->get();
         if (strpos("$smsBody", "$otp") === false) {
-            echo "\nMismatch between otp value found and otp value expected\n";
             return false;
         }
-
-        echo "\nFound otp value in cache\n";
         return true;
     }
 
     public function reset($phone)
     {
-        echo "\nResetting code for: {$phone}\n";
-
         if (!$this->pool->hasItem($phone)) {
-            echo "\nNo cached otp value found for phone: {$phone}\n";
             return false;
         }
 
