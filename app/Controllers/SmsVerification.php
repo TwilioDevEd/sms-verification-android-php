@@ -61,10 +61,7 @@ class SmsVerification
         }
 
         $otp = $this->pool->getItem($phone)->get();
-        if (strpos("$smsBody", "$otp") === false) {
-            return false;
-        }
-        return true;
+        return (bool) strpos("$smsBody", "$otp");
     }
 
     public function reset($phone)
