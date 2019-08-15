@@ -14,7 +14,7 @@
     "require": {
         "klein/klein": "^2.1",
         "php": ">=5.6.4",
-        "tedivm/stash": "^0.14.1",
+        "tedivm/stash": "^0.15.2",
         "twilio/sdk": "^5.8",
         "vlucas/phpdotenv": "^2.4"
     },
