@@ -1,5 +1,5 @@
 {
-    "name": "TwilioDevEd/sms-verification-android-php",
+    "name": "twilio-deved/sms-verification-android-php",
     "description": "SMS Verification for Android - Server for PHP.",
     "license": "MIT",
     "authors": [
