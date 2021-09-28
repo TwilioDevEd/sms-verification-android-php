@@ -33,6 +33,10 @@ Open `.env` in your favorite text editor and configure the following values. You
 `APP_HASH` | Matches the Android application to the SMS message - get this from the Settings menu item in the Android application.
 `CLIENT_SECRET` | Matches the Android application to the server - you can set this in the `strings.xml` file in your Android application. It must match the server's config value. You can also override it in the Settings menu of the app.
 
+On production, to avoid showing errors, you should set the variable `DISPLAY_ERRORS` to`0`. For development,
+it can be set to `1` on development. For more information, read 
+[this](https://phpdelusions.net/articles/error_reporting)
+
 #### A Note on API Keys
 
 When you generate an API key pair at the URLs above, your API Secret will only be shown once -
@@ -55,6 +59,20 @@ php -S localhost:8000
 Your application should now be running at [http://localhost:8000/](http://localhost:8000/).
 
 Check your config values, and then make sure everything looks good.
+
+## Running tests
+
+Install the developement dependencies
+
+```bash
+composer install --dev
+```
+
+and run the tests
+
+```bash
+composer test
+```
 
 ## Running the server with ngrok
 
