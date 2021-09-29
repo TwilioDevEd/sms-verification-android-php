@@ -4,6 +4,9 @@ $file = file_exists(__DIR__ . '/../.env') ? '.env' : '.env.example';
 $dotenv = new \Dotenv\Dotenv(__DIR__ . '/../', $file);
 $dotenv->load();
 
+$DISPLAY_ERRORS = $_ENV['DISPLAY_ERRORS'];
+ini_set('display_errors', $DISPLAY_ERRORS);
+
 $config = [
     'twilioAccountSID' => getenv('TWILIO_ACCOUNT_SID'),
     'twilioApiKey' => getenv('TWILIO_API_KEY'),
