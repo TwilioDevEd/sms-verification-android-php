@@ -62,7 +62,7 @@ Check your config values, and then make sure everything looks good.
 
 ## Running tests
 
-Install the developement dependencies
+Install the development dependencies
 
 ```bash
 composer install --dev
