@@ -1,16 +1,19 @@
 <a href="https://www.twilio.com">
   <img src="https://static0.twilio.com/marketing/bundles/marketing/img/logos/wordmark-red.svg" alt="Twilio" width="250" />
 </a>
-[![Build Status](https://travis-ci.org/TwilioDevEd/sms-verification-android-php.svg?branch=master)](https://travis-ci.org/TwilioDevEd/sms-verification-android-php)
 
-# SMS Verification for Android - Server for PHP
+# Archived - SMS Verification for Android - Server for PHP
+
+Please visit the [App Verification with SMS](https://www.twilio.com/docs/sms/app-verification) page on the Twilio Docs to learn more about how to use App Verification for Android with Twilio SMS.
+
+## Description
 
 This sample project demonstrates how to use Twilio's SMS Messaging APIs
 to verify Android application user's phone numbers. This application supports the SMS Verifier APIs
-from Google Play Services TODO: Link
+from Google Play Services
 
 You'll also need to have a sample Android application that you configure to use these URLs to verify phone
-numbers. You can download that application from Google here TODO: Link
+numbers. You can download that application from Google here
 
 ## Configure the sample application
 
